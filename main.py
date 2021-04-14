@@ -1,6 +1,6 @@
 import requests
-import config
 import telebot
+import config
 
 url = 'http://api.openweathermap.org/data/2.5/weather'
 
@@ -9,13 +9,14 @@ bot = telebot.TeleBot(config.api_telegram)
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    bot.send_message(message.chat.id, 'Welcome, ' + str(message.from_user.first_name) + ',' + '\n' + 'Input city name!')
+    bot.send_message(message.chat.id, 'Welcome, ' + str(message.from_user.first_name) + '!' + '\n' + 'Input city name')
 
 
 @bot.message_handler(commands=['help'])
 def welcome(message):
     bot.send_message(message.chat.id,
-                     '/start запуск бота\n/help команды бота\nчтоб узнать погоду напишите в чат название города')
+                     '/help bot\'s instructions \n\n '
+                     'to find out the weather, write the name of the city in the chat')
 
 
 @bot.message_handler(content_types=['text'])
@@ -25,20 +26,21 @@ def test(message):
     try:
         params = {'APPID': config.api_weather,
                   'q': city_name,
-                  'units': 'metric'}
+                  'units': 'metric'
+                  }
         result = requests.get(url, params=params)
         weather = result.json()
 
-        bot.send_message(message.chat.id, 'In the city of' + str(
-            weather['name'] + 'temperature' + str(float(weather['main']['temp'])) + ' &#8451;' + 'C' + '\n' +
-            'Max temperature' + str(float(weather['main']['temp_max'])) + ' &#8451;' + 'C' + '\n' +
-            'Min temperature' + str(float(weather['main']['temp_min'])) + ' &#8451;' + 'C' + '\n' +
-            'Wind' + str(float(weather['main']['speed'])) + '\n' +
-            'Pressure' + str(float(weather['main']['pressure'])) + '\n' +
-            'Humidity' + str(float(weather['main']['humidity'])) + '\n'))
+        bot.send_message(message.chat.id, 'In ' + str(weather['name']) + '\n' +
+                         'Temperature:  ' + str(int(weather['main']['temp'])) + '\xb0C' + '\n' +
+                         'Max temperature:  ' + str(int(weather['main']['temp_max'])) + '\xb0C' + '\n' +
+                         'Min temperature:  ' + str(int(weather['main']['temp_min'])) + '\xb0C' + '\n' +
+                         'Wind:  ' + str(int(weather['wind']['speed'])) + ' m/s' + '\n' +
+                         'Pressure:  ' + str(int(weather['main']['pressure'])) + ' hpa' + '\n' +
+                         'Humidity:  ' + str(int(weather['main']['humidity'])) + '%' + '\n')
 
     except:
-        bot.send_message(message.chat.id, 'City' + city_name + ' not found')
+        bot.send_message(message.chat.id, 'City ' + city_name + ' not found')
 
 
 if __name__ == '__main__':
