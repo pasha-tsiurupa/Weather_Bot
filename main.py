@@ -9,18 +9,22 @@ bot = telebot.TeleBot(config.api_telegram)
 
 @bot.message_handler(commands=['start'])
 def welcome(message):
-    sti = open('welcome.png', 'rb')
-    bot.send_sticker(message.chat.id, sti)
-    bot.send_message(message.chat.id, 'Welcome,' + str(message.from_user.username) + ',' + '\n' +
-                     'Input city name!')
+    bot.send_message(message.chat.id, 'Welcome, ' + str(message.from_user.first_name) + ',' + '\n' + 'Input city name!')
+
+
+@bot.message_handler(commands=['help'])
+def welcome(message):
+    bot.send_message(message.chat.id,
+                     '/start запуск бота\n/help команды бота\nчтоб узнать погоду напишите в чат название города')
 
 
 @bot.message_handler(content_types=['text'])
-def weather_send(message):
-    s_city = message.text
+def test(message):
+    city_name = message.text
+
     try:
-        params = {'APP_ID': config.api_weather,
-                  'q': s_city,
+        params = {'APPID': config.api_weather,
+                  'q': city_name,
                   'units': 'metric'}
         result = requests.get(url, params=params)
         weather = result.json()
@@ -34,7 +38,7 @@ def weather_send(message):
             'Humidity' + str(float(weather['main']['humidity'])) + '\n'))
 
     except:
-        bot.send_message(message.chat.id, s_city + 'not found')
+        bot.send_message(message.chat.id, 'City' + city_name + ' not found')
 
 
 if __name__ == '__main__':
