@@ -14,9 +14,7 @@ def welcome(message):
 
 @bot.message_handler(commands=['help'])
 def welcome(message):
-    bot.send_message(message.chat.id,
-                     '/help bot\'s instructions \n\n '
-                     'to find out the weather, write the name of the city in the chat')
+    bot.send_message(message.chat.id, 'To find out the weather, write the name of the city in the chat')
 
 
 @bot.message_handler(content_types=['text'])
@@ -24,10 +22,11 @@ def test(message):
     city_name = message.text
 
     try:
-        params = {'APPID': config.api_weather,
-                  'q': city_name,
-                  'units': 'metric'
-                  }
+        params = {
+            'APPID': config.api_weather,
+            'q': city_name,
+            'units': 'metric'
+        }
         result = requests.get(url, params=params)
         weather = result.json()
 
@@ -37,7 +36,8 @@ def test(message):
                          'Min temperature:  ' + str(int(weather['main']['temp_min'])) + '\xb0C' + '\n' +
                          'Wind:  ' + str(int(weather['wind']['speed'])) + ' m/s' + '\n' +
                          'Pressure:  ' + str(int(weather['main']['pressure'])) + ' hpa' + '\n' +
-                         'Humidity:  ' + str(int(weather['main']['humidity'])) + '%' + '\n')
+                         'Humidity:  ' + str(int(weather['main']['humidity'])) + '%' + '\n'
+                         )
 
     except:
         bot.send_message(message.chat.id, 'City ' + city_name + ' not found')
